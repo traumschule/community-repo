@@ -10,11 +10,11 @@ import {
   ReportData,
 } from "./types/council";
 import { sum } from "./lib";
-import { getCouncilAt } from "./lib/api";
+//import { getCouncilAt } from "./lib/api";
 import { StorageKey, U32, u32, Vec } from "@polkadot/types";
-import { Backer, Seats } from "@joystream/types/council";
-import { MemberId, Membership } from "@joystream/types/members";
-import { Mint, MintId } from "@joystream/types/mint";
+import { MemberId } from "@joystream/types/common";
+import { Candidate, CouncilMember } from "@joystream/types/council";
+import { Membership } from "@joystream/types/members";
 import { ProposalDetailsOf, ProposalOf } from "@joystream/types/augment/types";
 import { Moment } from "@polkadot/types/interfaces";
 
@@ -228,9 +228,8 @@ async function getCouncilMembersInfo(
   range: BlockRange,
   proposals: Array<ProposalInfo>
 ) {
-  const seats: Seats = await getCouncilAt(api, range.startBlockHash);
-
   let councilRoundInfo = new CouncilRoundInfo();
+  /**
   councilRoundInfo.members = await Promise.all(
     seats.map(async (seat): Promise<CouncilMemberInfo> => {
       let info = new CouncilMemberInfo();
@@ -245,7 +244,7 @@ async function getCouncilMembersInfo(
       const membership = (await api.query.members.membershipById(
         info.memberId
       )) as Membership;
-      info.username = membership.handle.toString();
+      info.username = membership.handle_hash.toString();
       info.ownStake = Number(seat.stake.toBigInt());
       info.backersStake = sum(seat.backers.map((b: Backer) => +b.stake));
       return info;
@@ -279,7 +278,7 @@ async function getCouncilMembersInfo(
     startCouncilMint.total_minted.toBigInt()
   );
   councilRoundInfo.endMinted = Number(endCouncilMint.total_minted.toBigInt());
-
+**/
   return councilRoundInfo;
 }
 
@@ -292,18 +291,19 @@ async function getProposal(
     range.endBlockHash,
     id
   )) as ProposalOf;
-  if (proposal.createdAt?.toBigInt() < range.startBlockHeight) {
+  if (proposal.activatedAt.toBigInt() < range.startBlockHeight) {
     return null;
   }
 
   let proposalInfo = new ProposalInfo();
   proposalInfo.id = id;
+  /**
   proposalInfo.name = String(proposal.title?.toHuman());
   try {
     const proposer = (await api.query.members.membershipById(
       proposal.proposerId
     )) as Membership;
-    proposalInfo.creatorUsername = proposer.handle.toString();
+    proposalInfo.creatorUsername = proposer.handle_hash.toString();
   } catch (e) {
     proposalInfo.creatorUsername = ``;
     console.error(`Failed to fetch proposer: ${e.message}`);
@@ -350,7 +350,7 @@ async function getProposal(
       let member = (await api.query.members.membershipById(
         memberId
       )) as Membership;
-      proposalInfo.votersUsernames.push(member.handle.toString());
+      proposalInfo.votersUsernames.push(member.handle_hash.toString());
     }
   }
 
@@ -362,7 +362,7 @@ async function getProposal(
   proposalInfo.type = ProposalType[typeString];
 
   if (proposalInfo.type == ProposalType.Spending) {
-    let spendingData = proposalDetails.asSpending;
+    let spendingData = proposalDetails.FundingRequest;
     let accountId = spendingData[1];
     proposalInfo.paymentAmount = Number(spendingData[0].toBigInt());
     let paymentDestinationMemberId =
@@ -373,9 +373,10 @@ async function getProposal(
           paymentDestinationMemberId
         )) as Membership;
       proposalInfo.paymentDestinationMemberUsername =
-        paymentDestinationMembership.handle.toString();
+        paymentDestinationMembership.handle_hash.toString();
     }
   }
+**/
   return proposalInfo;
 }
 

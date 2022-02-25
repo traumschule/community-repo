@@ -19,20 +19,15 @@ import {
   StatusData,
 } from "./lib/types";
 import { Option, u32, Vec } from "@polkadot/types";
-import { ElectionStake, SealedVote, Seats } from "@joystream/types/council";
-import { Mint, MintId } from "@joystream/types/mint";
+import { MemberId } from "@joystream/types/common";
+import { Candidate, CouncilMember } from "@joystream/types/council";
 import { CategoryId } from "@joystream/types/forum";
-import { MemberId, Membership } from "@joystream/types/members";
+import { Membership } from "@joystream/types/members";
 import {
   Proposal,
   ProposalId,
   SpendingParams,
 } from "@joystream/types/proposals";
-import {
-  RewardRelationship,
-  RewardRelationshipId,
-} from "@joystream/types/recurring-rewards";
-import { Stake } from "@joystream/types/stake";
 import { StorageBucket, StorageBucketId } from "@joystream/types/storage";
 import { Worker, WorkerId } from "@joystream/types/working-group";
 import { ProposalDetails, ProposalOf } from "@joystream/types/augment/types";
@@ -41,7 +36,7 @@ import axios from "axios";
 import moment from "moment";
 
 // lib
-import { eventStats, getPercent, getTotalMinted } from "./lib";
+import { eventStats, getPercent } from "./lib";
 import {
   connectApi,
   getBlock,
@@ -52,23 +47,16 @@ import {
   getEra,
   getEraStake,
   getEvents,
-  getCouncil,
   getCouncilRound,
   getCouncilSize,
   getCouncilApplicants,
-  getCouncilApplicantStakes,
   getCouncilCommitments,
   getCouncilPayoutInterval,
   getCouncilPayout,
   getCouncilElectionDurations,
   getNextWorker,
   getWorkers,
-  getWorkerReward,
   getStake,
-  getCouncilMint,
-  getMintsCreated,
-  getMint,
-  getGroupMint,
   getNextMember,
   getMember,
   getNextPost,
@@ -324,7 +312,7 @@ export class StatisticsCollector {
       termDuration,
     ]: number[] = await getCouncilElectionDurations(this.api, endHash);
 
-    const nrCouncilMembers = ((await getCouncil(this.api)) as Seats).length;
+    const nrCouncilMembers = 0; //(await getCouncil(this.api)).length;
     const totalCouncilRewardsPerBlock =
       amountPerPayout && payoutInterval
         ? (amountPerPayout * nrCouncilMembers) / payoutInterval
@@ -409,6 +397,7 @@ ${workersTable}`;
   }
 
   async fillMintsInfo(range: Hash[]): Promise<void> {
+    /**
     const [startHash, endHash] = range;
     const startNrMints = await getMintsCreated(this.api, startHash);
     const endNrMints = await getMintsCreated(this.api, endHash);
@@ -453,20 +442,24 @@ ${workersTable}`;
       mintStats += `| ${tag} Minted | ${start} | ${end} | ${diff} | ${change} |\n`;
     });
     Promise.all(promises).then(() => this.saveStats({ mintStats, tokenomics }));
+**/
   }
 
   // Calculate growth
   async mintStats(
     api: ApiPromise,
-    mintId: MintId,
+    mintId: any,
     range: Hash[]
   ): Promise<MintStats> {
+    /**
     const [startHash, endHash] = range;
     const startMint: Mint = await getMint(api, startHash, mintId);
     const endMint: Mint = await getMint(api, endHash, mintId);
     const start = getTotalMinted(startMint);
     const end = getTotalMinted(endMint);
     return this.formatChange(start, end);
+        **/
+    return this.formatChange(0, 0);
   }
 
   async fillCouncilInfo(
@@ -521,7 +514,7 @@ ${workersTable}`;
         "Note: The given start block is not the first block of the council round so council election information will be empty"
       );
     }
-
+    /**
     let lastBlockHash = await getBlockHash(this.api, startBlock - 1);
     let applicants: Vec<AccountId> = await getCouncilApplicants(
       this.api,
@@ -542,6 +535,7 @@ ${workersTable}`;
       lastBlockHash
     ).then((votes: Vec<Hash>) => votes.length);
     election.electionApplicantsStakes = electionApplicantsStakes;
+    **/
     this.saveStats(election);
   }
 

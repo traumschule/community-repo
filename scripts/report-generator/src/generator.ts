@@ -11,6 +11,7 @@ import { Config } from "./types/tokenomics";
 import { Round } from "./lib/types";
 import { types as joyTypes } from "@joystream/types";
 import { Hash, Moment } from "@polkadot/types/interfaces";
+import { MemberId } from "@joystream/types/common";
 import {
   BlockRange,
   CouncilMemberInfo,
@@ -21,10 +22,8 @@ import {
   ProposalType,
   ReportData,
 } from "./types/council";
-import { Seats } from "@joystream/types/council";
-import { MemberId, Membership } from "@joystream/types/members";
+import { Membership } from "@joystream/types/members";
 import { StorageKey, u32, U32, Vec } from "@polkadot/types";
-import { Mint, MintId } from "@joystream/types/mint";
 import { ProposalDetailsOf, ProposalOf } from "@joystream/types/augment/types";
 
 const CONFIG: Config = {
