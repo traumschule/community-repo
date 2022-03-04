@@ -11,13 +11,16 @@
   },
   "dependencies": {
     "@joystream/metadata-protobuf": "^1.0.0",
-    "@joystream/types": "^0.17.3",
+    "@joystream/types": "^0.18.1",
     "@polkadot/types": "5.9.1",
-    "@polkadot/util": "7.9.2",
-    "@polkadot/keyring": "7.9.2",
-    "@polkadot/util-crypto": "7.9.2",
+    "@polkadot/util": "7.3.1",
+    "@polkadot/keyring": "7.3.1",
+    "@polkadot/util-crypto": "7.3.1",
     "@types/bn.js": "^4.11.5",
-    "bn.js": "^5.1.2"
+    "bn.js": "5.1.2"
+  },
+  "resolutions": {
+    "@polkadot/util-crypto": "7.3.1"
   },
   "resolutions": {
     "@polkadot/util-crypto": "7.9.2"
