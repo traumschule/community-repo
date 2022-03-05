@@ -2,7 +2,7 @@
 
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { types } from "@joystream/types";
-import { Seat } from "@joystream/types/council";
+import { CouncilMember } from "@joystream/types/council";
 // import { ValidatorId } from '@polkadot/types/interfaces';
 
 // import BN from 'bn.js';
@@ -24,7 +24,7 @@ async function main() {
 
   console.log(`Chain '${chain}' - node: ${nodeName} v${nodeVersion}`);
 
-  let council = (await api.query.council.activeCouncil()) as unknown as Seat[];
+  let council = (await api.query.council.activeCouncil()) as CouncilMember[];
   let validators = await api.query.session.validators(); //  as unknown as ValidatorId[];
   let version = await api.rpc.state.getRuntimeVersion(); // as any;
 

@@ -1,4 +1,5 @@
-import { MemberId, Membership } from "@joystream/types/members";
+import { MemberId } from "@joystream/types/common";
+import { Membership } from "@joystream/types/members";
 import { ApiPromise } from "@polkadot/api";
 import { Vec } from "@polkadot/types";
 import { AccountId } from "@polkadot/types/interfaces";
@@ -25,7 +26,7 @@ export async function getParticipant(
     memberId = +isMemberRoot[0];
     const handle = (
       (await api.query.members.membershipById(isMemberRoot[0])) as Membership
-    ).handle.toString();
+    ).handle_hash.toString();
     const partipant: Participant = {
       memberId,
       handle,
@@ -41,7 +42,7 @@ export async function getParticipant(
         handle.push(
           (
             (await api.query.members.membershipById(ids)) as Membership
-          ).handle.toString()
+          ).handle_hash.toString()
         );
       }
     }
@@ -89,7 +90,7 @@ export async function getParticipantAt(
         blockHash,
         isMemberRoot[0]
       )) as Membership
-    ).handle.toString();
+    ).handle_hash.toString();
     const partipant: Participant = {
       memberId,
       handle,
@@ -108,7 +109,7 @@ export async function getParticipantAt(
               blockHash,
               ids
             )) as Membership
-          ).handle.toString()
+          ).handle_hash.toString()
         );
       }
     }

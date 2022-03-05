@@ -1,10 +1,6 @@
 import { WsProvider, ApiPromise } from "@polkadot/api";
 import { types } from "@joystream/types";
 import { Worker, WorkerId } from "@joystream/types/working-group";
-import {Null} from "@polkadot/types";
-import { RewardRelationship } from "@joystream/types/recurring-rewards";
-import { Stake, StakingStatus, Staked } from "@joystream/types/stake";
-import { ApplicationOf, WorkerOf } from "@joystream/types/augment-codec/all";
 
 interface WorkingGroupStake {
   stakeId: number;
@@ -26,7 +22,6 @@ interface ContentCurator {
   roleAccount: string;
   applicationId: number;
   stakeProfile?: WorkingGroupStake;
-  rewardRelationship?: WorkingGroupReward;
 }
 
 interface StorageProvider {
@@ -34,7 +29,6 @@ interface StorageProvider {
   memberId: number;
   roleAccount: string;
   stakeProfile?: WorkingGroupStake;
-  rewardRelationship?: WorkingGroupReward;
 }
 
 async function main() {
@@ -54,7 +48,7 @@ async function main() {
   const storageWorkerKeys =
     await api.query.storageWorkingGroup.workerById.keys();
   const storageWorkerIds = storageWorkerKeys.map(
-      (key) => key.args[0] as WorkerId
+    (key) => key.args[0] as WorkerId
   ) as WorkerId[];
   storageWorkerIds.sort((a, b) => +a - +b);
   console.log("all storageWorkerIds:", storageWorkerIds.join(", "));
@@ -68,6 +62,7 @@ async function main() {
       memberId: +worker.member_id,
       roleAccount: worker.role_account_id.toString(),
     };
+    /**
     if (worker.reward_relationship.isSome) {
       const rewardRelationshipId = worker.reward_relationship.unwrap();
       const rewardRelationship =
@@ -107,17 +102,14 @@ async function main() {
           roleStake: +stakingStatus.staked_amount,
         };
       }
-    }
+    }**/
     storageProviders.push(storageProvider);
   }
 
   // get all active content curators
   for (
     let i = 0;
-    i <
-    +(
-      await api.query.contentWorkingGroup.activeWorkerCount()
-    ).toString();
+    i < +(await api.query.contentWorkingGroup.activeWorkerCount()).toString();
     i++
   ) {
     const curator = (await api.query.contentWorkingGroup.workerById(
@@ -130,10 +122,9 @@ async function main() {
       ).toString();
       let applicationId = {} as ApplicationOf;
       for (let j = 0; j < nextApplicationId - 1; j++) {
-        const appId =
-          (await api.query.contentWorkingGroup.applicationById(
-            j
-          )) as ApplicationOf;
+        const appId = (await api.query.contentWorkingGroup.applicationById(
+          j
+        )) as ApplicationOf;
         if (+appId.member_id == +curator.member_id) {
           applicationId = appId;
           break;
@@ -146,6 +137,7 @@ async function main() {
         roleAccount: curator.role_account_id.toString(),
         applicationId: +applicationId?.application_id,
       };
+      /**
       if (curator.reward_relationship.isSome) {
         const rewardRelationshipId = curator.reward_relationship.unwrap();
         const rewardRelationship =
@@ -186,7 +178,7 @@ async function main() {
             roleStake: +stakingStatus.staked_amount,
           };
         }
-      }
+      }**/
       contentCurators.push(contentCurator);
     }
   }

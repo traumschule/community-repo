@@ -1,17 +1,12 @@
 import { WsProvider, ApiPromise } from "@polkadot/api";
 import { types } from "@joystream/types";
 import {
-  Active,
-  Approved,
-  ExecutionFailed,
-  Finalized,
   Proposal,
   ProposalDetails,
   ProposalId,
 } from "@joystream/types/proposals";
 import { StorageKey, Vec } from "@polkadot/types";
 import { Membership } from "@joystream/types/members";
-import { Stake, Staked, StakeId } from "@joystream/types/stake";
 import { AnyJson } from "@polkadot/types/types";
 
 interface ProposalOverview {
@@ -70,7 +65,7 @@ async function main() {
       (await api.query.members.membershipById(
         proposal.proposerId
       )) as Membership
-    ).handle.toString();
+    ).handle_hash.toString();
     const proposalStatus = proposal.status.value;
     const proposalDetails =
       (await api.query.proposalsCodex.proposalDetailsByProposalId(
@@ -83,19 +78,22 @@ async function main() {
         stakeId
       )) as ProposalId) === id
     ) {
-      const blockHash = await api.rpc.chain.getBlockHash(proposal.createdAt);
+      const blockHash = await api.rpc.chain.getBlockHash(proposal.activatedAt);
       const proposalStake = (await api.query.stake.stakes.at(
         blockHash,
         stakeId
       )) as Stake;
-      if (proposalStake.staking_status.isOfType('Staked')) {
-        stake += Number((proposalStake.staking_status.asType('Staked') as Staked).staked_amount);
+      if (proposalStake.staking_status.isOfType("Staked")) {
+        stake += Number(
+          (proposalStake.staking_status.asType("Staked") as Staked)
+            .staked_amount
+        );
       }
     }
     const proposalData: ProposalOverview = {
       id: +id,
       type: proposalDetails.type.toString(),
-      title: Buffer.from(proposal.title.toString().substr(2), 'hex').toString(),
+      title: Buffer.from(proposal.title.toString().substr(2), "hex").toString(),
       createdBy: [+proposal.proposerId, proposerHandle],
       stakeId: +stakeId,
       stake,

@@ -1,13 +1,7 @@
 import { WsProvider, ApiPromise } from "@polkadot/api";
 import { types } from "@joystream/types";
-import {
-  Announcing,
-  ElectionStage,
-  Revealing,
-  Seats,
-  Voting,
-} from "@joystream/types/council";
-import { Null, Option, u32 } from "@polkadot/types";
+import { CouncilMember } from "@joystream/types/council";
+import { Null, Option } from "@polkadot/types";
 import {
   CouncilData,
   CouncilMemberData,
@@ -16,7 +10,6 @@ import {
 } from "./interfaces";
 import { getParticipantAt } from "./functions";
 import { BalanceOf, BlockNumber, Hash } from "@polkadot/types/interfaces";
-import { Mint, MintId } from "@joystream/types/mint";
 
 async function main() {
   // Initialise the provider to connect to the local node
@@ -37,12 +30,13 @@ async function main() {
   for (let i = 0; i < blocks.length; i++) {
     const councilMembers: CouncilMemberData[] = [];
     const blockHash = (await api.rpc.chain.getBlockHash(blocks[i])) as Hash;
+    b; /**
     const electionStatus = (await api.query.councilElection.stage.at(
       blockHash
     )) as Option<ElectionStage>;
-    const electionRound = +((await api.query.councilElection.round.at(
+    const electionRound = +((await api.query.councilElection.announcementPeriodNr.at(
       blockHash
-    )) as u32);
+    ))
     console.log(`
       at block: ${blocks[i]},
       the election stage was: ${electionStatus.value.toString()},
@@ -64,11 +58,11 @@ async function main() {
         );
       } else {
       }
-    }
+    }**/
     const activeCouncil = (await api.query.council.activeCouncil.at(
       blockHash
-    )) as Seats;
-    if (!activeCouncil.isEmpty) {
+    )) as CouncilMember[];
+    if (activeCouncil.length) {
       const elected: Participant[] = [];
       for (let member of activeCouncil) {
         let otherStake = 0;
@@ -159,14 +153,15 @@ async function main() {
         electedHash
       )) as Option<BlockNumber>;
 
+      /**
       const councilMint = (await api.query.council.councilMint.at(
         electedHash
       )) as MintId;
       const mintAtStart = (await api.query.minting.mints.at(
         electedHash,
         councilMint
-      )) as Mint;
-      const mintCapacityAtStart = +mintAtStart.capacity;
+      )) as Mint;**/
+      const mintCapacityAtStart = 0; //+mintAtStart.capacity;
 
       let rewardInterval = 3600;
       if (!(getRewardInterval.value instanceof Null)) {
